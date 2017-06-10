@@ -1,8 +1,12 @@
 package testsCliente;
 
 import java.io.IOException;
-
-import javax.swing.JTextArea;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -17,15 +21,29 @@ import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
 
 public class TestCliente {
+	private ServerSocket servidor;
+	private Gson gson = new Gson();
+	private int puerto = 9999;
+	
+	ObjectInputStream entradaDatos;
+	ObjectOutputStream salidaDatos;
+	
+	private Thread hilo;
 
-	/// Para realizar los test es necesario iniciar el servidor
-
+	/// Para realizar los test es necesario iniciar el servidor	
+	
 	@Test
 	public void testConexionConElServidor() {
 		Gson gson = new Gson();
-
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
+		
+		colaMsjs.add(new Paquete());
+	
+		simulaSevidor(colaMsjs);
+		
 		Cliente cliente = new Cliente();
-
+		
 		// Pasado este punto la conexi�n entre el cliente y el servidor resulto exitosa
 		Assert.assertEquals(1, 1);
 
@@ -48,12 +66,18 @@ public class TestCliente {
 	@Test
 	public void testRegistro() {
 		Gson gson = new Gson();
-
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
+		
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		
+		colaMsjs.add(pu);
+		
+		simulaSevidor(colaMsjs);
 
 		Cliente cliente = new Cliente();
 
@@ -84,12 +108,18 @@ public class TestCliente {
 	@Test
 	public void testRegistroFallido() {
 		Gson gson = new Gson();
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
 
 		// Registro el usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		
+		colaMsjs.add(pu);
+		
+		simulaSevidor(colaMsjs);
 
 		Cliente cliente = new Cliente();
 
@@ -118,16 +148,18 @@ public class TestCliente {
 	}
 
 	@Test
-	public void testRegistrarPersonaje() {
+	public void testRegistrarPersonaje() throws IOException {
 		Gson gson = new Gson();
-
-		Cliente cliente = new Cliente();
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
 
 		// Registro de usuario
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.REGISTRO);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		
+		colaMsjs.add(pu);
 
 		// Registro de personaje
 		PaquetePersonaje pp = new PaquetePersonaje();
@@ -142,6 +174,12 @@ public class TestCliente {
 		pp.setNombre("PjTest");
 		pp.setRaza("Asesino");
 		pp.setSaludTope(1);
+		
+		colaMsjs.add(pp);
+		
+		simulaSevidor(colaMsjs);
+		
+		Cliente cliente = new Cliente();
 
 		try {
 
@@ -175,12 +213,19 @@ public class TestCliente {
 	@Test
 	public void testIniciarSesion() {
 		Gson gson = new Gson();
-		Cliente cliente = new Cliente();
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
 
 		PaqueteUsuario pu = new PaqueteUsuario();
 		pu.setComando(Comando.INICIOSESION);
 		pu.setUsername("nuevoUser");
 		pu.setPassword("test");
+		
+		colaMsjs.add(pu);
+		
+		simulaSevidor(colaMsjs);
+		
+		Cliente cliente = new Cliente();
 
 		try {
 
@@ -207,9 +252,10 @@ public class TestCliente {
 	}
 
 	@Test
-	public void testActualizarPersonaje() {
+	public void testActualizarPersonaje() throws IOException {
 		Gson gson = new Gson();
-		Cliente cliente = new Cliente();
+		
+		Queue<Paquete> colaMsjs = new LinkedList<Paquete>();
 
 		PaquetePersonaje pp = new PaquetePersonaje();
 		pp.setComando(Comando.ACTUALIZARPERSONAJE);
@@ -223,6 +269,12 @@ public class TestCliente {
 		pp.setNombre("PjTest");
 		pp.setRaza("Asesino");
 		pp.setSaludTope(10000);
+		
+		colaMsjs.add(pp);
+		
+		simulaSevidor(colaMsjs);
+		
+		Cliente cliente = new Cliente();
 
 		try {
 
@@ -247,4 +299,45 @@ public class TestCliente {
 			e.printStackTrace();
 		}
 	}
+	
+	private void simulaSevidor(final Queue<Paquete> colaMsjs) {
+		hilo = new Thread(new Runnable(){
+	
+			@Override
+			public void run() {
+				try {
+					servidor = new ServerSocket(puerto);
+					
+					Socket cliente = servidor.accept();
+					
+					entradaDatos = new ObjectInputStream(cliente.getInputStream());
+					salidaDatos = new ObjectOutputStream(cliente.getOutputStream());
+					
+					Paquete msj = colaMsjs.poll();
+					
+					while(msj!=null) {
+						entradaDatos.readObject();
+
+						msj.setMensaje("1");
+						
+						salidaDatos.writeObject(gson.toJson(msj));
+						
+						msj = colaMsjs.poll();
+					}
+					cliente.close();
+				} catch (IOException | ClassNotFoundException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						servidor.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+			}
+		});
+		hilo.start();
+	}
+
 }

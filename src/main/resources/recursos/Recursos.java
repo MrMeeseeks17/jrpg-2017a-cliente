@@ -1,10 +1,14 @@
 package recursos;
 
+
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import frames.MenuCarga;
 import mundo.Tile;
 
@@ -75,6 +79,7 @@ public class Recursos {
 	public static BufferedImage barraExperiencia;
 	public static BufferedImage menuBatalla;
 	public static BufferedImage menuBatallaDeshabilitado;
+	public static BufferedImage noItem;
 	
 	public static Map<String, BufferedImage> habilidades = new HashMap<>();
 	// Fin Batalla
@@ -82,12 +87,14 @@ public class Recursos {
 
 	// Se cargan todos los recursos del juego una sola vez al inicio
 
-	public static void cargar(MenuCarga menuCarga) {
+	public static void cargar(MenuCarga menuCarga) throws NumberFormatException, IOException {
 		
 		int elementosCargados = 0;
 		
 		ANCHO = 256;
 		ALTO = 256;
+		//Items
+		noItem = ImageIO.read(new File("recursos/items/SlotVacio.png"));
 
 		// Inicio humano
 		spriteHumano = new SpriteSheet(CargadorImagen.cargarImagen("/Humano.png"));
@@ -235,7 +242,7 @@ public class Recursos {
 		// Fin Ogro
 
 		// Inicio Elfo
-		spriteElfo = new SpriteSheet(CargadorImagen.cargarImagen("/Elfo.png"));
+		spriteElfo = new SpriteSheet(CargadorImagen.cargarImagen("/elfo.png"));
 
 		actualizarBarraDeCarga(++elementosCargados, menuCarga);
 		
@@ -336,27 +343,20 @@ public class Recursos {
 		
 		// Mapa
 		SpriteSheet mapaAubenor = new SpriteSheet(CargadorImagen.cargarImagen("/Aubenor.png"));
-		
-		Tile.aubenor = new Tile[81];
-		
-		boolean [][] solidezAubenor = {{true, true, false, true, false, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, false, false, false, false , false, false ,false, true, true},
-				{false, false, false, false, false , false, false ,false, true, true},
-				{false, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true},
-				{true, true, true, true, true, true, true, true, true, true}};	
-		
-		for(int y = 0 ; y < 8 ; y++){
-			
-			for(int x = 0; x < 10 ; x++){
-				
-				Tile.aubenor[y * 10 + x + 1] = new Tile(mapaAubenor.getTile(x * 64, y * 64, 64, 64), y * 10 + x + 1, solidezAubenor[y][x], 64, 64);
-				
+			Tile.aubenor = new Tile[81];
+			boolean [][] solidezAubenor = {{true, true, false, true, false, true, true, true, true, true},
+					{true, true, true, true, true, true, true, true, true, true},
+					{true, true, true, true, true, true, true, true, true, true},
+					{true, false, false, false, false , false, false ,false, true, true},
+					{false, false, false, false, false , false, false ,false, true, true},
+					{false, true, true, true, true, true, true, true, true, true},
+					{true, true, true, true, true, true, true, true, true, true},
+					{true, true, true, true, true, true, true, true, true, true}};		
+			for(int y = 0 ; y < 8 ; y++){
+				for(int x = 0; x < 10 ; x++){
+					Tile.aubenor[y * 10 + x + 1] = new Tile(mapaAubenor.getTile(x * 64, y * 64, 64, 64), y * 10 + x + 1, solidezAubenor[y][x], 64, 64);
+				}
 			}
-			
-		}
 		
 		// Fin Entorno
 
