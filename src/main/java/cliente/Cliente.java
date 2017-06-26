@@ -75,6 +75,20 @@ public class Cliente extends Thread {
 		}
 	}
 
+	public Cliente(String ip, int puerto) {
+		try {
+			cliente = new Socket(ip, puerto);
+			miIp = cliente.getInetAddress().getHostAddress();
+			entrada = new ObjectInputStream(cliente.getInputStream());
+			salida = new ObjectOutputStream(cliente.getOutputStream());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Fallo al iniciar la aplicación. "
+					+ "Revise la conexión con el servidor.");
+			System.exit(1);
+			e.printStackTrace();
+		}
+}
+	
 	@Override
 	public void run() {
 		synchronized(this) {
