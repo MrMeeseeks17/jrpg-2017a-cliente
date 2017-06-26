@@ -22,6 +22,8 @@ import mensajeria.PaqueteUsuario;
 
 
 public class TestCliente {
+	
+}
 /*
 	private Thread myThread;
 	private ServerSocket server;
