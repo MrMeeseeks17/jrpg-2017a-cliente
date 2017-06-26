@@ -14,7 +14,7 @@ test.ignoreFailures = true
 defaultTasks 'clean', 'compileJava', 'test', 'fatJar' , 'checkstyleMain', 'pmd', 'findbugsMain', 'jacocoTestReport'
 
 
-compileJava {options.encoding = "UTF-8"}   
+//compileJava {options.encoding = "UTF-8"}   
 
 sourceSets {
     main {
@@ -112,7 +112,7 @@ task fatJar(type: Jar) {
     	attributes "Main-Class": "frames.MenuInicio"
   	}
 
-    baseName = 'jrpg-cliente'
+    baseName = 'jrpg-2017a-cliente'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from('src/main/java/frames') {
     	include '*.png'
