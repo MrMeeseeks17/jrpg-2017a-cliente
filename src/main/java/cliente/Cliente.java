@@ -98,8 +98,8 @@ public class Cliente extends Thread {
 
 	@Override
 	public void run() {
-		synchronized(this) {
-			
+		synchronized (this) {
+
 			ComandosCliente comando;
 			try {
 
@@ -119,12 +119,11 @@ public class Cliente extends Thread {
 					wait();
 
 					int comandoLlegada = getAccion();
-					
-					if(comandoLlegada == Comando.SALIR)
-						paqueteUsuario.setIp(getMiIp());
-					
-					paqueteUsuario.setComando(comandoLlegada);
 
+					if (comandoLlegada == Comando.SALIR)
+						paqueteUsuario.setIp(getMiIp());
+
+					paqueteUsuario.setComando(comandoLlegada);
 
 					// Le envio el paquete al servidor
 					salida.writeObject(paqueteUsuario.getJson());
@@ -132,10 +131,9 @@ public class Cliente extends Thread {
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
 					Paquete paquete = Paquete.loadJson(cadenaLeida);
-					comando = (ComandosCliente)paquete.getComandoObj(ComandosCliente.COMANDOSCLIENTE);
+					comando = (ComandosCliente) paquete.getComandoObj(ComandosCliente.COMANDOSCLIENTE);
 					comando.setCliente(this);
 					comando.ejecutar();
-
 				}
 
 				// Creo un paquete con el comando mostrar mapas
@@ -294,5 +292,9 @@ public class Cliente extends Thread {
 			paquetePersonaje.anadirItem(paqueteActualizado.getItems().get(paqueteActualizado.getItems().size() - 1));
 		}
 
+	}
+
+	public void setPaquetePersonaje(PaquetePersonaje paquete) {
+		paquetePersonaje = paquete;
 	}
 }

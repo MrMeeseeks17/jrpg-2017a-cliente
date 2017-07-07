@@ -37,7 +37,7 @@ public class MenuCreacionPj extends JFrame {
 	private JComboBox<String> cbxCasta;
 	private JComboBox<String> cbxRaza;
 
-	public MenuCreacionPj(final Cliente cliente, final PaquetePersonaje personaje) {
+	public MenuCreacionPj(final Object cliente, final PaquetePersonaje personaje) {
 		
 		setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
 				new ImageIcon(MenuJugar.class.getResource("/cursor.png")).getImage(),
