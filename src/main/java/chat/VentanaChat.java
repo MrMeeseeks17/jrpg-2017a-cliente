@@ -37,8 +37,6 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 	public VentanaChat(final String nombrePj) {	
 		
 		setResizable(false);
-//		setBounds(555, 355, 250, 240);
-		
 		setBounds(555, 355, 400, 400);
 		setVisible(true);
 		setClosable(false);
@@ -56,7 +54,7 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 		contentPane.add(scrollPane);
 
 		editorPane = new JEditorPane();
-		editorPane.setContentType("text/html");
+		editorPane.setContentType("text/Plain");
 		editorPane.setForeground(Color.BLACK);
 		editorPane.setBackground(Color.WHITE);
 		scrollPane.setViewportView(editorPane);
