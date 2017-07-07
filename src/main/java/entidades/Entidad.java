@@ -165,8 +165,7 @@ public class Entidad {
 							try {
 								juego.getCliente().getSalida().writeObject(gson.toJson(pBatalla));
 							} catch (IOException e) {
-								JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor");
-								e.printStackTrace();
+								JOptionPane.showMessageDialog(null, "Fallo la conexiï¿½n con el servidor");
 							}
 						} else {
 							juego.getEstadoJuego().setHaySolicitud(false, null, 0);
@@ -410,8 +409,7 @@ public class Entidad {
 			juego.getCliente().getSalida()
 					.writeObject(gson.toJson(juego.getUbicacionPersonaje(), PaqueteMovimiento.class));
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor.");
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Fallo la conexiï¿½n con el servidor.");
 		}
 	}
 

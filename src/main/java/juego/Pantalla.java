@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import chat.VentanaChat;
 import cliente.Cliente;
 import frames.MenuJugar;
 import interfaz.MenuInfoPersonaje;
@@ -37,6 +38,8 @@ public class Pantalla {
 
 	private JFrame pantalla;
 	private Canvas canvas;
+
+	private static VentanaChat ventanaChat;
 
 	private final Gson gson = new Gson();
 
@@ -64,8 +67,6 @@ public class Pantalla {
 					System.exit(0);
 				} catch (IOException e) {
 					JOptionPane.showMessageDialog(null, "Fallo al intentar cerrar la aplicación.");
-					System.exit(1);
-					e.printStackTrace();
 				}
 			}
 		});
@@ -82,6 +83,10 @@ public class Pantalla {
 		});
 		pantalla.setLocationRelativeTo(null);
 		pantalla.setVisible(false);
+
+		ventanaChat = new VentanaChat(cliente.getPaquetePersonaje().getNombre());
+		pantalla.add(ventanaChat);
+		
 
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(ANCHO, ALTO));
@@ -123,5 +128,13 @@ public class Pantalla {
 	public void dibujarInventario(Cliente cliente) {
 		MenuInventario menu = new MenuInventario(cliente);
 		menu.setVisible(true);
+	}
+
+	public static void invisibleChat() {
+		ventanaChat.setVisible(false);
+	}
+
+	public static void visibleChat() {
+		ventanaChat.setVisible(true);
 	}
 }

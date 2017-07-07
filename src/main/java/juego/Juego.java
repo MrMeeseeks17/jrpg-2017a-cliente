@@ -108,7 +108,7 @@ public class Juego implements Runnable {
 
 		// Fin de graficado de imagenes
 
-		bs.show(); // Hace visible el próximo buffer disponible
+		bs.show(); // Hace visible el prï¿½ximo buffer disponible
 		g.dispose();
 	}
 
@@ -166,7 +166,6 @@ public class Juego implements Runnable {
 			hilo.join();
 		} catch (InterruptedException e) {
 			JOptionPane.showMessageDialog(null, "Fallo al intentar detener el juego.");
-			e.printStackTrace();
 		}
 	}
 

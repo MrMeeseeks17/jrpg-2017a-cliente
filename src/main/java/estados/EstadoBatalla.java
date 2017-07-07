@@ -21,6 +21,7 @@ import interfaz.EstadoDePersonaje;
 import interfaz.MenuBatalla;
 import interfaz.MenuInfoPersonaje;
 import juego.Juego;
+import juego.Pantalla;
 import mensajeria.Comando;
 import mensajeria.PaqueteAtacar;
 import mensajeria.PaqueteBatalla;
@@ -264,7 +265,6 @@ public class EstadoBatalla extends Estado {
 			juego.getCliente().getSalida().writeObject(gson.toJson(paqueteAtacar));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Fallo la conexion con el servidor.");
-			e.printStackTrace();
 		}
 	}
 
@@ -298,9 +298,10 @@ public class EstadoBatalla extends Estado {
 //			paquetePersonaje.ponerBonus();
 //			paqueteEnemigo.ponerBonus();
 			
+			Pantalla.visibleChat();
+			
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor");
-			e.printStackTrace();
 		}
 	}
 

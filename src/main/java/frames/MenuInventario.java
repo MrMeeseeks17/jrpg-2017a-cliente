@@ -11,6 +11,7 @@ import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
@@ -35,8 +36,7 @@ public class MenuInventario extends JFrame {
 					cliente.getPaquetePersonaje().setComando(Comando.ACTUALIZARINVENTARIO);
 					cliente.getSalida().writeObject(gson.toJson(cliente.getPaquetePersonaje()));
 				} catch (IOException e1) {
-
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error al Obtener Gson Action Event Menu Inventario");
 				}
 				dispose();
 
@@ -52,7 +52,7 @@ public class MenuInventario extends JFrame {
 			this.add(cancelar, BorderLayout.AFTER_LAST_LINE);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error creacion de Inventario. Clase MenuInventario");
 		}
 		this.setBounds(600, 600, 600, 600);
 		this.pack();

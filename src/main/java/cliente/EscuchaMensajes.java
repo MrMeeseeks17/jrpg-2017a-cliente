@@ -99,7 +99,6 @@ public class EscuchaMensajes extends Thread {
 					personajesConectados.remove(paquetePersonaje.getId());
 					personajesConectados.put(paquetePersonaje.getId(), paquetePersonaje);
 					
-					//System.out.println(paquetePersonaje.getItems().get(7).getNombre());
 					if (juego.getPersonaje().getId() == paquetePersonaje.getId()) {
 						juego.actualizarPersonaje();
 						juego.getEstadoJuego().actualizarPersonaje();
@@ -109,7 +108,6 @@ public class EscuchaMensajes extends Thread {
 			}
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor.");
-			e.printStackTrace();
 		}
 	}
 	/**Pide la ubicacion de los personajes

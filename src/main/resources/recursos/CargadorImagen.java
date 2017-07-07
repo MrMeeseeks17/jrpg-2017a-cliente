@@ -13,7 +13,6 @@ public class CargadorImagen {
 			return  ImageIO.read(CargadorImagen.class.getResource(path));
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Error al cargar el archivo " + path);
-			e.printStackTrace();
 		}
 		return null;
 	}

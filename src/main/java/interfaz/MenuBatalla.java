@@ -54,6 +54,8 @@ public class MenuBatalla {
 		else
 			Pantalla.centerString(g, new Rectangle(x, y + 5, Recursos.menuBatalla.getWidth(), 20), "Turno Rival");
 		
+		Pantalla.invisibleChat();
+		
 	}
 
 	public int getBotonClickeado(int mouseX, int mouseY){

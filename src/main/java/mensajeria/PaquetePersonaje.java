@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.JOptionPane;
+
 import dominio.Item;
 
 public class PaquetePersonaje extends Paquete implements Serializable, Cloneable {
@@ -184,7 +186,7 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 			useBonus(bonusSalud, bonusEnergia, bonusAtaque, bonusDefensa, bonusMagia);
 		} catch (IOException e) {
 			
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error al añadir item metodo parametrizado");
 		}
 	}
 	
@@ -229,7 +231,7 @@ public class PaquetePersonaje extends Paquete implements Serializable, Cloneable
 			items.add(new Item(idItem,null,0,0,0, 0, 0, null));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Error al añadir item por ID");
 		}
 		
 	}
