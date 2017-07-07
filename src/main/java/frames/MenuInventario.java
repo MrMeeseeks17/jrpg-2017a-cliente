@@ -24,7 +24,7 @@ import mensajeria.Comando;
 
 public class MenuInventario extends JFrame {
 
-	private JButton cancelar = new JButton("Exit");
+	private JButton cancelar = new JButton("Salir");
 
 	public MenuInventario(final Cliente cliente) {
 
@@ -44,7 +44,7 @@ public class MenuInventario extends JFrame {
 
 		});
 		this.setTitle("Inventario");
-		this.setUndecorated(true);
+//		this.setUndecorated(true);
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		try {
 			this.setLayout(new BorderLayout());
@@ -56,10 +56,10 @@ public class MenuInventario extends JFrame {
 		}
 		this.setBounds(600, 600, 600, 600);
 		this.pack();
-		this.setLocationRelativeTo(null);
+//		this.setLocationRelativeTo(null);
 
-		this.setLocation(900, 140);
-		this.setResizable(false);
+		this.setLocation(800, 100);
+//		this.setResizable(false);
 		this.setVisible(true);
 	}
 

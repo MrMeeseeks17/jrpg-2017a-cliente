@@ -6,12 +6,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
+import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import juego.Pantalla;
 
 //import chatServidor.Message;
 
@@ -28,14 +31,15 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 	private JEditorPane editorPane;
 	private Conexion conn;
 	private String nombrePj;
-
 	/**
 	 * Create the frame.
 	 */
 	public VentanaChat(final String nombrePj) {	
 		
 		setResizable(false);
-		setBounds(555, 355, 250, 240);
+//		setBounds(555, 355, 250, 240);
+		
+		setBounds(555, 355, 400, 400);
 		setVisible(true);
 		setClosable(false);
 
@@ -67,13 +71,13 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 			public void keyPressed(KeyEvent arg0) {
 				if(arg0.getKeyCode() == KeyEvent.VK_ENTER)
 					enviarMensaje(nombrePj);
+				if(arg0.getKeyCode() == KeyEvent.VK_0)
+					Pantalla.dibujarInventario();				
 			}
 		});
 		textField.setBounds(0, 185, 233, 27);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		
-		
 		ArchivoDePropiedades adp = new ArchivoDePropiedades("config.properties");
 		adp.lectura();
 		try {
@@ -81,7 +85,6 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 			conn.start();
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, "Error al tratar de iniciar conexion con archivo Properties");
-			
 		}
 	}
 	
@@ -95,7 +98,7 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 			String mensaje = textField.getText().toString().substring(1);
 			String destino = textField.getText().toString().substring(1, textField.getText().toString().indexOf(" "));
 			mensaje = mensaje.substring(mensaje.indexOf(" ") + 1);
-			editorPane.setText(editorPane.getText()  + "<< Para " +  destino + ": " + mensaje + " >>" + "<br>");
+			editorPane.setText(editorPane.getText()  + "Para " +  destino + ": " + mensaje + "<br>");
 			textField.setText("");
 		}
 		else {

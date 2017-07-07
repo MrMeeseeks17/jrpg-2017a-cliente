@@ -13,11 +13,13 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import Inventario.Inventario;
 import chat.VentanaChat;
 import cliente.Cliente;
 import frames.MenuJugar;
@@ -40,10 +42,12 @@ public class Pantalla {
 	private Canvas canvas;
 
 	private static VentanaChat ventanaChat;
-
 	private final Gson gson = new Gson();
 
+	private static Cliente c;
 	public Pantalla(final String NOMBRE, final int ANCHO, final int ALTO, final Cliente cliente) {
+		c = cliente;
+		
 		pantalla = new JFrame(NOMBRE);
 		pantalla.setIconImage(Toolkit.getDefaultToolkit().getImage("src/main/java/frames/IconoWome.png"));
 		pantalla.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(
@@ -85,9 +89,10 @@ public class Pantalla {
 		pantalla.setVisible(false);
 
 		ventanaChat = new VentanaChat(cliente.getPaquetePersonaje().getNombre());
-		pantalla.add(ventanaChat);
+		pantalla.add(ventanaChat);		
+	
 		
-
+		
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(ANCHO, ALTO));
 		canvas.setMaximumSize(new Dimension(ANCHO, ALTO));
@@ -96,6 +101,8 @@ public class Pantalla {
 
 		pantalla.add(canvas);
 		pantalla.pack();
+		
+//		dibujarInventario(cliente);
 	}
 
 	public Canvas getCanvas() {
@@ -124,8 +131,12 @@ public class Pantalla {
 
 		g.drawString(s, r.x + a, r.y + b);
 	}
-
-	public void dibujarInventario(Cliente cliente) {
+	
+	public static void dibujarInventario() {
+		dibujarInventario(c);
+	}
+	
+	public static void dibujarInventario(Cliente cliente) {
 		MenuInventario menu = new MenuInventario(cliente);
 		menu.setVisible(true);
 	}
