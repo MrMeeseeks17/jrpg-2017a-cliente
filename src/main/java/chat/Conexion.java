@@ -17,10 +17,10 @@ public class Conexion extends Thread{
 	private DataInputStream in;
 	private DataOutputStream out;
 	private String user;
-	private MessageHandler mh;
+	private InterfazMensaje mh;
 	private int stop = 0;
 
-	public Conexion(String host, int port, String user, MessageHandler mh) throws Exception {
+	public Conexion(String host, int port, String user, InterfazMensaje mh) throws Exception {
 		this.sock = new Socket(host, port);
 		this.user = user;
 		this.mh = mh;

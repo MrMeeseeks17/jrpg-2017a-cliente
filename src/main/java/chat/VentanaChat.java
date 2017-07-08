@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextArea;
 
-public class VentanaChat extends JInternalFrame implements MessageHandler {
+public class VentanaChat extends JInternalFrame implements InterfazMensaje {
 
 	private JPanel contentPane;
 	private JScrollPane scrollPane;

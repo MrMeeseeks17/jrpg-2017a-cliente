@@ -2,6 +2,6 @@ package chat;
 
 //import chatServidor.Message;
 
-public interface MessageHandler {
+public interface InterfazMensaje {
 	public void messageReceived(Mensaje m);
 }
