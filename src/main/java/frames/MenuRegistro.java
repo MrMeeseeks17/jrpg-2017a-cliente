@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 
 public class MenuRegistro extends JFrame {
 	
@@ -98,13 +99,19 @@ public class MenuRegistro extends JFrame {
 		labelBackground.setIcon(new ImageIcon(MenuRegistro.class.getResource("/frames/menuBackground.jpg")));
 		btnRegistrarse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				synchronized(cliente){
-					cliente.getPaqueteUsuario().setUsername(txtUsuario.getText());
-					cliente.getPaqueteUsuario().setPassword(pwPassword.getText());
-					cliente.setAccion(Comando.REGISTRO);
-					cliente.notify();
+				if(txtUsuario.getText().trim().length()==0 ) {
+					JOptionPane.showMessageDialog(null, "Nombre de usuario vacío.");
+				}else if(pwPassword.getText().trim().length()==0) {
+					JOptionPane.showMessageDialog(null, "Contraseña vacía.");
+				} else {
+					synchronized(cliente){
+						cliente.getPaqueteUsuario().setUsername(txtUsuario.getText());
+						cliente.getPaqueteUsuario().setPassword(pwPassword.getText());
+						cliente.setAccion(Comando.REGISTRO);
+						cliente.notify();
+					}
+					dispose();
 				}
-				dispose();
 			}
 		});
 	}

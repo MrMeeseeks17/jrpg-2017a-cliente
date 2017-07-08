@@ -28,7 +28,7 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 	private JPanel contentPane;
 	private JScrollPane scrollPane;
 	private JTextField textField;
-	private JEditorPane editorPane;
+	private JTextArea editorPane;
 	private Conexion conn;
 	private String nombrePj;
 	/**
@@ -37,6 +37,8 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 	public VentanaChat(final String nombrePj) {	
 		
 		setResizable(false);
+//		setBounds(555, 355, 250, 240);
+		
 		setBounds(555, 355, 400, 400);
 		setVisible(true);
 		setClosable(false);
@@ -53,8 +55,9 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 		scrollPane.setBounds(0, 0, 235, 180);
 		contentPane.add(scrollPane);
 
-		editorPane = new JEditorPane();
-		editorPane.setContentType("text/Plain");
+		editorPane = new JTextArea();
+//		editorPane.setContentType("text/html");
+		editorPane.enable();
 		editorPane.setForeground(Color.BLACK);
 		editorPane.setBackground(Color.WHITE);
 		scrollPane.setViewportView(editorPane);
@@ -87,26 +90,30 @@ public class VentanaChat extends JInternalFrame implements MessageHandler {
 	}
 	
 	public void enviarMensaje(final String nombrePj) {
-		try {
-			conn.sendChat(nombrePj, textField.getText());
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, "Error al enviar mensaje");
+		String mensaje = textField.getText();
+		if(mensaje.trim().length()!=0)
+		{
+			mensaje = mensaje.toString().substring(1);
+			try {
+				conn.sendChat(nombrePj, textField.getText());
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, "Error al enviar mensaje");
+			}
+			if(textField.getText().toString().contains("@")) {
+				String destino = textField.getText().toString().substring(1, textField.getText().toString().indexOf(" "));
+				mensaje = mensaje.substring(mensaje.indexOf(" ") + 1);
+//				editorPane.setText(editorPane.getText()  + "Para " +  destino + ": " + mensaje + "\n");
+				editorPane.append("Para " +  destino + ": " + mensaje + "\n");
+			}
+			else
+				editorPane.append(nombrePj + ": " + textField.getText() + "\n");
 		}
-		if(textField.getText().toString().contains("@")) {
-			String mensaje = textField.getText().toString().substring(1);
-			String destino = textField.getText().toString().substring(1, textField.getText().toString().indexOf(" "));
-			mensaje = mensaje.substring(mensaje.indexOf(" ") + 1);
-			editorPane.setText(editorPane.getText()  + "Para " +  destino + ": " + mensaje + "<br>");
-			textField.setText("");
-		}
-		else {
-			editorPane.setText(editorPane.getText()  + nombrePj + ": " + textField.getText() + "<br>");
-			textField.setText("");
-		}
+		textField.setText("");
+		textField.requestFocus();
 	}
 	
 	public void recibido(String str){
-		editorPane.setText(editorPane.getText() + str);
+		editorPane.append(str);
 	}
 
 	@Override

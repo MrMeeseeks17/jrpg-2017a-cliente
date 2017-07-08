@@ -9,7 +9,6 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
-import comandosCliente.ComandosCliente;
 import frames.MenuCarga;
 import frames.MenuCreacionPj;
 import frames.MenuJugar;
@@ -19,9 +18,8 @@ import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaquetePersonaje;
 import mensajeria.PaqueteUsuario;
-
-/**
- * La clase Cliente tiene como función ejecutar el cliente.
+/**La clase Cliente tiene como función  
+ * ejecutar el cliente.
  */
 public class Cliente extends Thread {
 
@@ -43,21 +41,14 @@ public class Cliente extends Thread {
 	// Ip y puerto
 	private String ip;
 	private final int puerto = 9999;
-
-	/**
-	 * Pide la accion
-	 * 
+	/**Pide la accion
 	 * @return Devuelve la accion
 	 */
 	public int getAccion() {
 		return accion;
 	}
-
-	/**
-	 * Setea la accion
-	 * 
-	 * @param accion
-	 *            accion a setear
+	/**Setea la accion
+	 * @param accion accion a setear
 	 */
 	public void setAccion(final int accion) {
 		this.accion = accion;
@@ -65,22 +56,21 @@ public class Cliente extends Thread {
 
 	private Juego wome;
 	private MenuCarga menuCarga;
-
-	/**
-	 * Constructor del Cliente
+	/**Constructor del Cliente
 	 */
 	public Cliente() {
 
 		ip = "localhost";
-
+			
 		try {
 			cliente = new Socket(ip, puerto);
 			miIp = cliente.getInetAddress().getHostAddress();
 			entrada = new ObjectInputStream(cliente.getInputStream());
 			salida = new ObjectOutputStream(cliente.getOutputStream());
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"Fallo al iniciar la aplicación. " + "Revise la conexión con el servidor.");
+			JOptionPane.showMessageDialog(null, "Fallo al iniciar la aplicación. "
+					+ "Revise la conexión con el servidor.");
+			System.exit(1);
 		}
 	}
 
@@ -91,16 +81,15 @@ public class Cliente extends Thread {
 			entrada = new ObjectInputStream(cliente.getInputStream());
 			salida = new ObjectOutputStream(cliente.getOutputStream());
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null,
-					"Fallo al iniciar la aplicación. " + "Revise la conexión con el servidor.");
+			JOptionPane.showMessageDialog(null, "Fallo al iniciar la aplicación. "
+					+ "Revise la conexión con el servidor.");
+			System.exit(1);
 		}
-	}
-
+}
+	
 	@Override
 	public void run() {
-		synchronized (this) {
-
-			ComandosCliente comando;
+		synchronized(this) {
 			try {
 
 				// Creo el paquete que le voy a enviar al servidor
@@ -118,22 +107,92 @@ public class Cliente extends Thread {
 					// Espero a que el usuario seleccione alguna accion
 					wait();
 
-					int comandoLlegada = getAccion();
+					switch (getAccion()) {
 
-					if (comandoLlegada == Comando.SALIR)
+					case Comando.REGISTRO:
+						paqueteUsuario.setComando(Comando.REGISTRO);
+						break;
+					case Comando.INICIOSESION:
+						paqueteUsuario.setComando(Comando.INICIOSESION);
+						break;
+					case Comando.SALIR:
 						paqueteUsuario.setIp(getMiIp());
-
-					paqueteUsuario.setComando(comandoLlegada);
+						paqueteUsuario.setComando(Comando.SALIR);
+						break;
+					default:
+						break;
+					}
 
 					// Le envio el paquete al servidor
-					salida.writeObject(paqueteUsuario.getJson());
+					salida.writeObject(gson.toJson(paqueteUsuario));
 
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
-					Paquete paquete = Paquete.loadJson(cadenaLeida);
-					comando = (ComandosCliente) paquete.getComandoObj(ComandosCliente.COMANDOSCLIENTE);
-					comando.setCliente(this);
-					comando.ejecutar();
+					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
+
+					switch (paquete.getComando()) {
+
+					case Comando.REGISTRO:
+						if (paquete.getMensaje().equals(Paquete.msjExito)) {
+
+							// Abro el menu para la creaci�n del personaje
+							MenuCreacionPj menuCreacionPJ = new MenuCreacionPj(this, paquetePersonaje);
+							menuCreacionPJ.setVisible(true);
+
+							// Espero a que el usuario cree el personaje
+							wait();
+
+							// Le envio los datos al servidor
+							paquetePersonaje.setComando(Comando.CREACIONPJ);
+							salida.writeObject(gson.toJson(paquetePersonaje));
+							JOptionPane.showMessageDialog(null, "Registro exitoso.");
+
+							// Recibo el paquete personaje con los datos (la id incluida)
+							paquetePersonaje = gson.fromJson((String) entrada.readObject(), PaquetePersonaje.class);
+
+							// Indico que el usuario ya inicio sesion
+							paqueteUsuario.setInicioSesion(true);
+
+						} else {
+							if (paquete.getMensaje().equals(Paquete.msjFracaso)) {
+								JOptionPane.showMessageDialog(null, "No se pudo registrar.");
+							}
+							// El usuario no pudo iniciar sesión
+							paqueteUsuario.setInicioSesion(false);
+						}
+						break;
+
+					case Comando.INICIOSESION:
+						if (paquete.getMensaje().equals(Paquete.msjExito)) {
+
+							// El usuario ya inicio sesi�n
+							paqueteUsuario.setInicioSesion(true);
+
+							// Recibo el paquete personaje con los datos
+							paquetePersonaje = gson.fromJson(cadenaLeida, PaquetePersonaje.class);
+
+						} else {
+							if (paquete.getMensaje().equals(Paquete.msjFracaso))
+								JOptionPane.showMessageDialog(null, "Error al iniciar sesión."
+										+ " Revise el usuario y la contraseña");
+
+							// El usuario no pudo iniciar sesión
+							paqueteUsuario.setInicioSesion(false);
+						}
+						break;
+
+					case Comando.SALIR:
+						// El usuario no pudo iniciar sesión
+						paqueteUsuario.setInicioSesion(false);
+						salida.writeObject(gson.toJson(new Paquete(Comando.DESCONECTAR), Paquete.class));
+						cliente.close();
+						break;
+						
+					
+					default:
+						break;
+					}
+
 				}
 
 				// Creo un paquete con el comando mostrar mapas
@@ -174,127 +233,82 @@ public class Cliente extends Thread {
 		}
 
 	}
-
-	/**
-	 * Pide el cliente
-	 * 
+	/**Pide el cliente
 	 * @return Devuelve el cliente
 	 */
 	public Socket getSocket() {
 		return cliente;
 	}
-
-	/**
-	 * Setea el cliente
-	 * 
-	 * @param cliente
-	 *            cliente a setear
+	/**Setea el cliente
+	 * @param cliente cliente a setear
 	 */
 	public void setSocket(final Socket cliente) {
 		this.cliente = cliente;
 	}
-
-	/**
-	 * Pide la ip
-	 * 
+	/**Pide la ip
 	 * @return Devuelve la ip
 	 */
 	public String getMiIp() {
 		return miIp;
 	}
-
-	/**
-	 * Setea la ip
-	 * 
-	 * @param miIp
-	 *            ip a setear
+	/**Setea la ip
+	 * @param miIp ip a setear
 	 */
 	public void setMiIp(final String miIp) {
 		this.miIp = miIp;
 	}
-
-	/**
-	 * Pide la entrada
-	 * 
+	/**Pide la entrada
 	 * @return Devuelve la entrada
 	 */
 	public ObjectInputStream getEntrada() {
 		return entrada;
 	}
-
-	/**
-	 * Setea la entrada
-	 * 
-	 * @param entrada
-	 *            entrada a setear
+	/**Setea la entrada
+	 * @param entrada entrada a setear
 	 */
 	public void setEntrada(final ObjectInputStream entrada) {
 		this.entrada = entrada;
 	}
-
-	/**
-	 * Pide la salida
-	 * 
+	/**Pide la salida
 	 * @return Devuelve la salida
 	 */
 	public ObjectOutputStream getSalida() {
 		return salida;
 	}
-
-	/**
-	 * Setea la salida
-	 * 
-	 * @param salida
-	 *            salida a setear
+	/**Setea la salida
+	 * @param salida salida a setear
 	 */
 	public void setSalida(final ObjectOutputStream salida) {
 		this.salida = salida;
 	}
-
-	/**
-	 * Pide el paquete usuario
-	 * 
+	/**Pide el paquete usuario
 	 * @return Devuelve el paquete usuario
 	 */
 	public PaqueteUsuario getPaqueteUsuario() {
 		return paqueteUsuario;
 	}
-
-	/**
-	 * Pide el paquete personaje
-	 * 
+	/**Pide el paquete personaje
 	 * @return Devuelve el paquete personaje
 	 */
 	public PaquetePersonaje getPaquetePersonaje() {
 		return paquetePersonaje;
 	}
-
-	/**
-	 * Pide el juego
-	 * 
+	/**Pide el juego
 	 * @return Devuelve el juego
 	 */
 	public Juego getJuego() {
 		return wome;
 	}
-
-	/**
-	 * Pide el menu de carga
-	 * 
+	/**Pide el menu de carga
 	 * @return Devuelve el menu de carga
 	 */
 	public MenuCarga getMenuCarga() {
 		return menuCarga;
 	}
-
 	public void actualizarItems(PaquetePersonaje paqueteActualizado) {
-		if (paquetePersonaje.getCantItems() != paqueteActualizado.getCantItems()) {
-			paquetePersonaje.anadirItem(paqueteActualizado.getItems().get(paqueteActualizado.getItems().size() - 1));
+		if(paquetePersonaje.getCantItems() != paqueteActualizado.getCantItems()) {
+			paquetePersonaje.anadirItem(paqueteActualizado.getItems().get(paqueteActualizado.getItems().size() -1));
 		}
-
-	}
-
-	public void setPaquetePersonaje(PaquetePersonaje paquete) {
-		paquetePersonaje = paquete;
+		
 	}
 }

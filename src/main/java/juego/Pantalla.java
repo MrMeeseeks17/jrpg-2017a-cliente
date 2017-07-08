@@ -2,6 +2,7 @@ package juego;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -29,6 +30,7 @@ import mensajeria.Paquete;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.font.FontRenderContext;
 
 import javax.swing.WindowConstants;
@@ -43,6 +45,8 @@ public class Pantalla {
 
 	private static VentanaChat ventanaChat;
 	private final Gson gson = new Gson();
+	
+	boolean swControl = false;
 
 	private static Cliente c;
 	public Pantalla(final String NOMBRE, final int ANCHO, final int ALTO, final Cliente cliente) {
@@ -89,9 +93,7 @@ public class Pantalla {
 		pantalla.setVisible(false);
 
 		ventanaChat = new VentanaChat(cliente.getPaquetePersonaje().getNombre());
-		pantalla.add(ventanaChat);		
-	
-		
+		pantalla.add(ventanaChat);			
 		
 		canvas = new Canvas();
 		canvas.setPreferredSize(new Dimension(ANCHO, ALTO));
